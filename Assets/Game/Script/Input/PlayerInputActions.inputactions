@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "PlayerInputActions",
     "maps": [
         {
@@ -84,6 +85,24 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "Hold",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "CursorHideAndShow",
+                    "type": "Button",
+                    "id": "467db78a-04a4-4e68-96a2-421e75e8ccc4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "b9ad5005-d12f-480e-a323-5fbaec424465",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": true
                 }
             ],
@@ -274,6 +293,39 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "82706fe4-55ba-4be1-843c-5e122175b009",
+                    "path": "<Keyboard>/leftAlt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CursorHideAndShow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "475ad48c-0a6a-4505-a06d-57a76cc197f3",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b22bfc5-d453-4ca7-a2c2-5d38ed6e99b0",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

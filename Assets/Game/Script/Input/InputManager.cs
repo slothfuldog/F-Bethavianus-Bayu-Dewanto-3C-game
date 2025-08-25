@@ -10,6 +10,12 @@ public class InputManager : MonoBehaviour
     public Action OnJumpStartedInput;
     public Action OnClimbStartedInput;
     public Action OnCancelClimb;
+    public Action OnHideShowCursor;
+    public Action OnChangePOV;
+    public Action OnCrouching;
+    public Action OnGliding;
+    public Action OnAttack;
+    public Action<Vector2> OnLookInput;
     private void Awake()
     {
         inputActions = new PlayerInputActions();
@@ -41,41 +47,38 @@ public class InputManager : MonoBehaviour
         // CheckMoveRightInput();
         CheckGoToMenuInput();
         CheckVerticalAxisInput();
+        CheckLookInput();
+
     }
 
     private void CheckVerticalAxisInput()
     {
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
-        if (moveInput != null)
-        {
-            OnMoveInput(moveInput);   
-        }
+        OnMoveInput?.Invoke(moveInput);
+
     }
 
     private void CheckGoToMenuInput()
     {
         if (inputActions.Menu.GoToMenu.triggered)
         {
-            Debug.Log("Go To Menu");
+            // Debug.Log("Go To Menu");
         }
     }
 
     private void CheckJumpInput()
-{
-    if (inputActions.Player.Jump.WasPressedThisFrame())
     {
-        OnJumpStartedInput?.Invoke();
-    }
+        if (inputActions.Player.Jump.WasPressedThisFrame())
+        {
+            OnJumpStartedInput?.Invoke();
+        }
 
-}
+    }
 
     private void CheckCrouchInput()
     {
-        if (inputActions.Player.Crouch.triggered)
-        {
-            Debug.Log("Crouch");
-        }
+        if (inputActions.Player.Crouch.triggered) OnCrouching?.Invoke();
     }
     private void CheckSprintInput()
     {
@@ -96,7 +99,14 @@ public class InputManager : MonoBehaviour
     {
         if (inputActions.Player.ChangePOV.triggered)
         {
-            Debug.Log("Became first person POV");
+            OnChangePOV();
+        }
+    }
+    private void HideShowCursorInput()
+    {
+        if (inputActions.Player.CursorHideAndShow.triggered)
+        {
+            OnHideShowCursor();
         }
     }
 
@@ -105,15 +115,12 @@ public class InputManager : MonoBehaviour
         if (inputActions.Player.Climb.triggered)
         {
             OnClimbStartedInput();
-            Debug.Log("climb");
         }
     }
     private void CheckGlideInput()
     {
-        if (inputActions.Player.Glide.triggered)
-        {
-            Debug.Log("Gliding");
-        }
+        if (inputActions.Player.Glide.triggered) OnGliding?.Invoke();
+
     }
 
     private void CheckCancelClimbAndGlideInput()
@@ -128,7 +135,16 @@ public class InputManager : MonoBehaviour
     {
         if (inputActions.Player.Attack.triggered)
         {
-            Debug.Log("Attack");
+            OnAttack?.Invoke();
+        }
+    }
+
+    private void CheckLookInput()
+    {
+        Vector2 lookInput = inputActions.Player.Look.ReadValue<Vector2>();
+        if (lookInput != Vector2.zero)
+        {
+            OnLookInput?.Invoke(lookInput);
         }
     }
 
