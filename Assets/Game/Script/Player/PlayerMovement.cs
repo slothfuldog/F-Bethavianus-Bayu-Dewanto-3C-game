@@ -459,8 +459,9 @@ public class PlayerMovement : MonoBehaviour
         isPlayerCrouching = _playerStance == PlayerStance.Crouch;
 
         _animator.SetBool("isCrouching", isPlayerCrouching);
-        _speed = isPlayerCrouching ? _crouchingSpeed : _speed;
-        Debug.Log("crouching " + isPlayerCrouching);
+        _speed = isPlayerCrouching ? _crouchingSpeed : _walkSpeed;
+        _playerCollider.height = isPlayerCrouching ? 1.3f : 1.8f;
+        _playerCollider.center = isPlayerCrouching ? Vector3.up * .66f : Vector3.up * .9f;
     }
 
     private void Gliding()
