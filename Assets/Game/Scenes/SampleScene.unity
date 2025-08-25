@@ -6247,7 +6247,7 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  _upperStepOffset: {x: 0, y: 0.3, z: 0.4}
+  _upperStepOffset: {x: 0, y: 0.3, z: 0.2}
   _stepCheckDistance: 0.2
   _stepForce: 5
   _climbDetector: {fileID: 1604811075}
