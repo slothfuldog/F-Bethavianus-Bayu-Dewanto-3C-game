@@ -15,6 +15,7 @@ public class InputManager : MonoBehaviour
     public Action OnCrouching;
     public Action OnGliding;
     public Action OnAttack;
+    public Action OnBackToMainMenu;
     public Action<Vector2> OnLookInput;
     private void Awake()
     {
@@ -48,6 +49,7 @@ public class InputManager : MonoBehaviour
         CheckGoToMenuInput();
         CheckVerticalAxisInput();
         CheckLookInput();
+        HideShowCursorInput();
 
     }
 
@@ -63,7 +65,7 @@ public class InputManager : MonoBehaviour
     {
         if (inputActions.Menu.GoToMenu.triggered)
         {
-            // Debug.Log("Go To Menu");
+            OnBackToMainMenu?.Invoke();
         }
     }
 

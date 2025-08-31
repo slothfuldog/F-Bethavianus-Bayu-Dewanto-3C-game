@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -92,6 +93,8 @@ public class PlayerMovement : MonoBehaviour
     private LayerMask _hitLayer;
     [SerializeField]
     private float _hitDetectorRadius;
+    [SerializeField]
+    private PlayerAudioManager _playerAudio;
 
 
 
@@ -103,6 +106,7 @@ public class PlayerMovement : MonoBehaviour
     private float _rotationSmoothVelocity;
 
     private bool _isSprinting;
+    private bool _hideCursor = true;
 
     private float _speed;
 
@@ -143,6 +147,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnCrouching += Crouching;
         _input.OnGliding += Gliding;
         _input.OnAttack += Attack;
+        _input.OnHideShowCursor += LockAndUnlockCursor;
         _playerCameraPOV.OnChangePOV += ChangePOV;
 
     }
@@ -166,6 +171,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnCrouching -= Crouching;
         _input.OnGliding -= Gliding;
         _input.OnAttack -= Attack;
+        _input.OnHideShowCursor -= LockAndUnlockCursor;
         _playerCameraPOV.OnChangePOV -= ChangePOV;
 
     }
@@ -174,6 +180,22 @@ public class PlayerMovement : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void LockAndUnlockCursor()
+    {
+        _hideCursor = !_hideCursor;
+        Debug.Log(_hideCursor);
+        if (_hideCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     private void Move(Vector2 axisDirection)
@@ -338,7 +360,11 @@ public class PlayerMovement : MonoBehaviour
         {
             _isJump = false;
             _animator.SetBool("isGliding", false);
-            if (_playerStance == PlayerStance.Glide) _playerCameraPOV.StartClampedCamera(false, PlayerStance.Stand);
+            if (_playerStance == PlayerStance.Glide)
+            {
+                _playerAudio.StopGlideSFX();
+                _playerCameraPOV.StartClampedCamera(false, PlayerStance.Stand);
+            }
             if (_playerStance != PlayerStance.Climb && _playerStance != PlayerStance.Crouch) _playerStance = PlayerStance.Stand;
         }
 
@@ -349,12 +375,32 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckStep()
     {
-        bool isHitLowerStep = Physics.Raycast(_groundDetector.position,
-        transform.forward, _stepCheckDistance);
-        bool isHitUpperStep = Physics.Raycast(_groundDetector.position + _upperStepOffset,
-        transform.forward, _stepCheckDistance);
+        // bool isHitLowerStep = Physics.Raycast(_groundDetector.position,
+        // transform.forward, _stepCheckDistance);
+        // bool isHitUpperStep = Physics.Raycast(_groundDetector.position + _upperStepOffset,
+        // transform.forward, _stepCheckDistance);
 
-        if (isHitLowerStep && !isHitUpperStep) _rigidBody.AddForce(0, _stepForce, 0);
+        // if (isHitLowerStep && !isHitUpperStep) _rigidBody.AddForce(0, _stepForce, 0);
+
+        if (Physics.Raycast(_groundDetector.position, transform.forward, out RaycastHit lowerHit, _stepCheckDistance))
+        {
+            // Make sure it's not our own collider
+            if (lowerHit.collider != _rigidBody.GetComponent<Collider>())
+            {
+                bool isHitUpperStep = Physics.Raycast(
+                    _groundDetector.position + _upperStepOffset,
+                    transform.forward,
+                    out RaycastHit upperHit,
+                    _stepCheckDistance
+                );
+
+                // If wall at bottom but space above -> climb
+                if (!isHitUpperStep)
+                {
+                    _rigidBody.AddForce(Vector3.up * _stepForce, ForceMode.VelocityChange);
+                }
+            }
+        }
     }
 
     private void CheckUpDownLeftRightClimable()
@@ -473,7 +519,11 @@ public class PlayerMovement : MonoBehaviour
 
             bool isGliding = _playerStance == PlayerStance.Glide;
             _animator.SetBool("isGliding", isGliding);
-            if (isGliding) _playerCameraPOV.StartClampedCamera(true, _playerStance);
+            if (isGliding)
+            {
+                _playerCameraPOV.StartClampedCamera(true, _playerStance);
+                _playerAudio.PlayGlideSFX();
+            }
         }
     }
 
@@ -559,6 +609,29 @@ public class PlayerMovement : MonoBehaviour
             Gizmos.DrawRay(_leftClimbableAreaDetector.position, transform.forward * _climbableAreaDistance);
         if (_rightClimbableAreaDetector != null)
             Gizmos.DrawRay(_rightClimbableAreaDetector.position, transform.forward * _climbableAreaDistance);
+        if (_groundDetector != null)
+        {
+            if (Physics.Raycast(_groundDetector.position, transform.forward, out RaycastHit hit, _stepCheckDistance))
+            {
+                Gizmos.color = Color.green; // Hit detected
+            }
+            else
+            {
+                Gizmos.color = Color.red; // No hit
+            }
+            Gizmos.DrawRay(_groundDetector.position, transform.forward * _stepCheckDistance);
+
+            // Upper ray
+            if (Physics.Raycast(_groundDetector.position + _upperStepOffset, transform.forward, out RaycastHit upperHit, _stepCheckDistance))
+            {
+                Gizmos.color = Color.green;
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+            }
+            Gizmos.DrawRay(_groundDetector.position + _upperStepOffset, transform.forward * _stepCheckDistance);
+        }
     }
 
     private void ChangePOV()
