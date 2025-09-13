@@ -185,7 +185,6 @@ public class PlayerMovement : MonoBehaviour
     private void LockAndUnlockCursor()
     {
         _hideCursor = !_hideCursor;
-        Debug.Log(_hideCursor);
         if (_hideCursor)
         {
             Cursor.lockState = CursorLockMode.Locked;

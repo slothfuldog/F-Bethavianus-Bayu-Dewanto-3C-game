@@ -13,10 +13,10 @@ TagManager:
   - UI
   - Climbable
   - Destroyable
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Stairs
+  - Retry
+  - Interacted
   - 
   - 
   - 

@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
     public Action OnGliding;
     public Action OnAttack;
     public Action OnBackToMainMenu;
+    public Action OnInteract;
     public Action<Vector2> OnLookInput;
     private void Awake()
     {
@@ -50,13 +51,13 @@ public class InputManager : MonoBehaviour
         CheckVerticalAxisInput();
         CheckLookInput();
         HideShowCursorInput();
+        CheckInteractInput();
 
     }
 
     private void CheckVerticalAxisInput()
     {
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-
         OnMoveInput?.Invoke(moveInput);
 
     }
@@ -81,6 +82,10 @@ public class InputManager : MonoBehaviour
     private void CheckCrouchInput()
     {
         if (inputActions.Player.Crouch.triggered) OnCrouching?.Invoke();
+    }
+    private void CheckInteractInput()
+    {
+        if (inputActions.Player.Interact.triggered) OnInteract?.Invoke();
     }
     private void CheckSprintInput()
     {

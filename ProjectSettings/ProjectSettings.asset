@@ -142,7 +142,6 @@ PlayerSettings:
   tvOSBundleVersion: 1.0
   bundleVersion: 0.1.001 (alpha build)
   preloadedAssets:
-  - {fileID: 2381664210531058929, guid: 3cbb3ae2a3fbfc0408d6757e49ed9b91, type: 2}
   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -822,7 +821,8 @@ PlayerSettings:
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
   webWasm2023: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    Standalone: UNITY_PIPELINE_URP
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
