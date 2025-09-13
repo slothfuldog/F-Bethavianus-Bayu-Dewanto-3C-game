@@ -89,6 +89,7 @@ public class PlayerController : MonoBehaviour
     private Coroutine _resetCombo;
 
     private bool _topAbleToClimb, _bottomAbleToClimb, _leftAbleToClimb, _rightAbleToClimb;
+    private bool _hideCursor = true;
 
 
     void Awake()
@@ -112,6 +113,7 @@ public class PlayerController : MonoBehaviour
         _input.OnChangePOV += ChangePOV;
         _input.OnGliding += Gliding;
         _input.OnInteract += Interact;
+        _input.OnHideShowCursor += LockAndUnlockCursor;
     }
 
     void Update()
@@ -172,12 +174,28 @@ public class PlayerController : MonoBehaviour
         _input.OnChangePOV -= ChangePOV;
         _input.OnGliding -= Gliding;
         _input.OnInteract -= Interact;
+        _input.OnHideShowCursor -= LockAndUnlockCursor;
     }
 
     private void HideAndLockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void LockAndUnlockCursor()
+    {
+        _hideCursor = !_hideCursor;
+        if (_hideCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     void TrackGround()
